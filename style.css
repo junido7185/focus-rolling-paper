@@ -1,0 +1,213 @@
+/* --- [1. 기본 설정 및 폰트] --- */
+:root {
+    --primary: #FF5100;
+    --dark-bg: #1a1a1a;
+    --paper: #fffcf4;
+    --shadow-soft: 2px 5px 15px rgba(0,0,0,0.15);
+    --shadow-deep: 5px 10px 30px rgba(0,0,0,0.3);
+}
+
+body {
+    margin: 0; padding: 0;
+    font-family: 'Pretendard', sans-serif;
+    background-color: var(--dark-bg);
+    color: #333;
+    overflow: hidden; 
+    height: 100vh;
+}
+
+/* 화면 전환 애니메이션 */
+.page { 
+    display: none; width: 100%; height: 100%; 
+    position: absolute; top: 0; left: 0;
+    background-size: cover; background-position: center;
+}
+.page.active { display: block; animation: fadeIn 0.5s ease-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* --- [2. 로그인 페이지] --- */
+#login-page {
+    background: radial-gradient(circle at center, #222 0%, #000 100%);
+    display: none; align-items: center; justify-content: center;
+}
+#login-page.active { display: flex; }
+
+.login-container { text-align: center; color: white; position: relative; z-index: 10; }
+.brand-title { 
+    font-size: 4rem; font-weight: 900; letter-spacing: 5px; margin: 0; 
+    background: linear-gradient(to right, #ff8a00, #ff5100);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.brand-subtitle { font-size: 1rem; color: #aaa; margin-bottom: 40px; }
+
+.login-form input {
+    display: block; width: 280px; margin: 10px auto; padding: 15px;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px; color: white; text-align: center;
+}
+.login-form button {
+    margin-top: 20px; padding: 15px 40px; border-radius: 30px;
+    background: var(--primary); border: none; color: white; font-weight: bold;
+    cursor: pointer; transition: 0.3s;
+}
+
+/* --- [3. 대시보드] --- */
+#dashboard-page { background: #f5f5f5; overflow-y: auto; }
+.dash-nav { padding: 20px; display: flex; justify-content: space-between; align-items: center; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.dash-nav .logo { font-weight: 900; color: var(--primary); }
+
+.gallery-container { max-width: 1000px; margin: 30px auto; padding: 0 20px 50px; }
+.gallery-title { text-align: center; font-size: 1.8rem; margin-bottom: 30px; }
+
+.polaroid-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+.member-polaroid {
+    background: white; padding: 10px 10px 35px 10px;
+    box-shadow: var(--shadow-soft);
+    transform: rotate(var(--r)); cursor: pointer; transition: 0.3s;
+    width: 100px;
+}
+.member-polaroid:hover { transform: scale(1.1) rotate(0deg) !important; z-index: 10; }
+.mem-img-box { width: 100%; height: 100px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #ccc; }
+.mem-name { font-family: 'Nanum Pen Script', cursive; font-size: 1.4rem; margin-top: 10px; text-align: center; display: block; }
+
+.my-archive-btn {
+    display: block; margin: 40px auto; padding: 12px 30px;
+    background: #333; color: white; border: none; border-radius: 50px;
+    cursor: pointer;
+}
+
+/* --- [4. 롤링페이퍼 (Desk Layout)] --- */
+#paper-page { background: url('assets/bg.jpg') no-repeat center center/cover; }
+
+/* 툴바 정렬 수정: Flexbox로 완벽한 중앙 정렬 */
+.toolbar {
+    position: absolute; top: 0; left: 0; width: 100%; height: 60px;
+    padding: 0 20px; box-sizing: border-box;
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 1000;
+}
+.title-box {
+    flex: 1; text-align: center; /* 가운데 영역 차지 */
+    display: flex; justify-content: center;
+}
+#target-name { 
+    color: white; font-weight: bold; font-size: 1.1rem;
+    background: rgba(0,0,0,0.6); padding: 8px 20px; border-radius: 30px;
+    backdrop-filter: blur(5px);
+}
+.tool-btn { 
+    background: rgba(255,255,255,0.3); border: none; color: white; 
+    padding: 8px; border-radius: 50%; cursor: pointer; 
+    display: flex; align-items: center; justify-content: center;
+}
+
+/* 데스크 래퍼: 화면 중앙에 책상 배치 */
+#desk-wrapper {
+    width: 100%; height: 100%; 
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; padding-top: 50px; /* 툴바 공간 확보 */
+    box-sizing: border-box;
+}
+
+/* 책상 표면: 비율 고정 (반응형의 핵심) */
+.desk-surface {
+    position: relative;
+    width: 100%; max-width: 600px; 
+    aspect-ratio: 1 / 1.4; /* 세로형 비율 (A4용지 비슷) */
+    /* background: rgba(255,0,0,0.1); 영역 확인용 */
+}
+
+/* --- 중앙 타이틀 (네온 제거) --- */
+.center-piece {
+    position: absolute; top: 45%; left: 50%; 
+    transform: translate(-50%, -50%);
+    width: 40%; z-index: 5;
+    pointer-events: none;
+}
+.title-img { width: 100%; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3)); }
+
+/* --- 슬롯 공통 --- */
+.slot {
+    position: absolute; cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: rgba(255,255,255,0.2); 
+    border: 1px dashed rgba(255,255,255,0.6);
+    display: flex; align-items: center; justify-content: center;
+}
+.slot:hover { 
+    transform: scale(1.1) rotate(0deg) !important; z-index: 999 !important; 
+    border: 2px solid var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+}
+.slot.filled { background-color: white; border: none; }
+
+/* [A] 필름 스트립 (2개, 대각선 배치) */
+.film-strip {
+    position: absolute; background: #111; padding: 2% 0;
+    box-shadow: var(--shadow-deep); z-index: 4;
+    display: flex; flex-direction: column; width: 42%;
+}
+.strip-top-left { top: 5%; left: 5%; transform: rotate(-8deg); }
+.strip-bottom-right { bottom: 5%; right: 5%; transform: rotate(-5deg); }
+
+.film-row { display: flex; gap: 2%; padding: 0 3%; }
+.film-frame {
+    position: relative; flex: 1; aspect-ratio: 1/1; /* 정사각형 프레임 */
+    background: #222; border: 1px solid #444;
+}
+.film-frame.filled { background: #000; }
+
+.film-holes {
+    height: 10px; width: 100%;
+    background-image: radial-gradient(#fff 2px, transparent 3px);
+    background-size: 15px 100%; opacity: 0.7;
+}
+
+/* [B] 폴라로이드 (4개, 남은 공간 배치) */
+.polaroid {
+    width: 25%; aspect-ratio: 1 / 1.3;
+    background: #fffcf4;
+    padding: 1.5% 1.5% 8% 1.5%; /* 하단 여백 비율로 */
+    box-sizing: border-box;
+    box-shadow: var(--shadow-soft);
+}
+.p-tr { top: 8%; right: 5%; transform: rotate(8deg); z-index: 2; }
+.p-bl { bottom: 8%; left: 5%; transform: rotate(5deg); z-index: 3; }
+.p-mid-l { top: 40%; left: 3%; transform: rotate(-4deg); z-index: 2; } /* 중앙 왼쪽 */
+.p-mid-r { top: 55%; right: 2%; transform: rotate(3deg); z-index: 1; } /* 중앙 오른쪽 */
+
+/* 텍스트/이미지 내부 처리 */
+.slot-img { width: 100%; height: 100%; object-fit: cover; }
+.slot-text { 
+    position: absolute; width: 100%; text-align: center; pointer-events: none;
+    font-family: 'Nanum Pen Script', cursive; color: #333; 
+    font-size: 1.2rem;
+}
+.polaroid .slot-text { bottom: 5%; left: 0; }
+.film-frame .slot-text { top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 0.9rem; }
+
+/* 장식 요소 */
+.deco-obj { position: absolute; pointer-events: none; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3)); }
+.camera { top: 12%; left: 55%; width: 20%; transform: rotate(15deg); z-index: 1; }
+
+.deco-text { 
+    position: absolute; font-family: 'Nanum Brush Script', cursive; 
+    color: rgba(255,255,255,0.9); font-size: 2rem; 
+    pointer-events: none; text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+.text-bye { bottom: 25%; left: 20%; transform: rotate(-5deg); }
+.text-start { top: 25%; right: 10%; transform: rotate(5deg); }
+
+/* --- [모달창] --- */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+.modal.open { display: flex; animation: zoomIn 0.3s; }
+@keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.modal-card { background: white; width: 90%; max-width: 400px; border-radius: 20px; overflow: hidden; }
+.modal-header { padding: 15px; background: #f8f8f8; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; }
+.modal-body { padding: 20px; }
+.modal-footer { padding: 15px; text-align: right; background: #f8f8f8; }
+
+textarea { width: 100%; height: 100px; border: 1px solid #ddd; padding: 10px; border-radius: 10px; resize: none; font-family: 'Pretendard'; }
+.upload-btn { display: inline-block; padding: 8px 15px; background: #eee; border-radius: 20px; margin-top: 10px; cursor: pointer; }
+#img-preview-area img { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-top: 10px; }
+.submit-btn { background: var(--primary); color: white; border: none; padding: 10px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; }

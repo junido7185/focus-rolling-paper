@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FOCUS 2025</title>
+    
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <audio id="bgm-player" loop> <source src="assets/bgm.mp3" type="audio/mp3"> </audio>
+    <audio id="shutter-sound"> <source src="assets/shutter.mp3" type="audio/mp3"> </audio>
+
+    <div id="login-page" class="page active">
+        <div class="login-container">
+            <h1 class="brand-title">FOCUS</h1>
+            <p class="brand-subtitle">2025년도를 기억에 담고 추억에 새기며</p>
+            <div class="login-form">
+                <input type="text" id="input-name" placeholder="이름 (Name)">
+                <input type="password" id="input-id" placeholder="학번 (Student ID)">
+                <button onclick="login()">ENTER</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboard-page" class="page">
+        <div class="dash-nav">
+            <span class="logo">FOCUS</span>
+            <span id="welcome-msg">Welcome</span>
+        </div>
+        <div class="gallery-container">
+            <h2 class="gallery-title">Choose a Member</h2>
+            <div id="member-list" class="polaroid-grid"></div>
+            <button class="my-archive-btn" onclick="openMyPaper()">📂 나의 롤링페이퍼 열기</button>
+        </div>
+    </div>
+
+    <div id="paper-page" class="page paper-bg">
+        <div class="toolbar">
+            <button class="tool-btn back" onclick="goBack()"><span class="material-icons-round">arrow_back</span></button>
+            <div class="title-box">
+                <span id="target-name">Memories</span>
+            </div>
+            <button class="tool-btn save" onclick="capturePaper()"><span class="material-icons-round">save_alt</span></button>
+        </div>
+
+        <div id="desk-wrapper">
+            <div id="paper-container" class="desk-surface">
+                
+                <div class="center-piece">
+                    <img src="assets/title.png" class="title-img" alt="FOCUS">
+                </div>
+
+                <div class="film-strip strip-top-left">
+                    <div class="film-holes top"></div>
+                    <div class="film-row">
+                        <div id="slot-0" class="slot film-frame" onclick="handleSlotClick(0)"></div>
+                        <div id="slot-1" class="slot film-frame" onclick="handleSlotClick(1)"></div>
+                        <div id="slot-2" class="slot film-frame" onclick="handleSlotClick(2)"></div>
+                    </div>
+                    <div class="film-holes bottom"></div>
+                </div>
+
+                <div class="film-strip strip-bottom-right">
+                    <div class="film-holes top"></div>
+                    <div class="film-row">
+                        <div id="slot-3" class="slot film-frame" onclick="handleSlotClick(3)"></div>
+                        <div id="slot-4" class="slot film-frame" onclick="handleSlotClick(4)"></div>
+                        <div id="slot-5" class="slot film-frame" onclick="handleSlotClick(5)"></div>
+                    </div>
+                    <div class="film-holes bottom"></div>
+                </div>
+
+                <div id="slot-6" class="slot polaroid p-tr" onclick="handleSlotClick(6)"></div> <div id="slot-7" class="slot polaroid p-bl" onclick="handleSlotClick(7)"></div> <div id="slot-8" class="slot polaroid p-mid-l" onclick="handleSlotClick(8)"></div> <div id="slot-9" class="slot polaroid p-mid-r" onclick="handleSlotClick(9)"></div> <img src="assets/camera.png" class="deco-obj camera" alt="">
+                <div class="deco-text text-bye">Good Bye</div>
+                <div class="deco-text text-start">New Start</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="write-modal" class="modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Message & Photo</h3>
+                <button onclick="closeModal()" class="close-icon"><span class="material-icons-round">close</span></button>
+            </div>
+            <div class="modal-body">
+                <textarea id="msg-input" placeholder="이곳에 추억을 기록해주세요..."></textarea>
+                <div class="upload-area">
+                    <input type="file" id="file-input" accept="image/*" onchange="previewImage(this)" hidden>
+                    <label for="file-input" class="upload-btn">
+                        <span class="material-icons-round">add_a_photo</span> 사진 선택
+                    </label>
+                    <div id="img-preview-area"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="submit-btn" onclick="submitMessage()">기록하기</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="read-modal" class="modal">
+        <div class="modal-card read-theme">
+            <div id="read-img-wrapper"></div>
+            <div class="read-content-box">
+                <p id="read-content"></p>
+                <span id="read-from"></span>
+            </div>
+            <button class="close-read-btn" onclick="closeReadModal()">닫기</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
