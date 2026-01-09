@@ -63,11 +63,11 @@ body {
 }
 .gallery-title { text-align: center; font-size: 2rem; margin-bottom: 40px; color: #333; }
 
-/* [핵심 레이아웃] Flexbox를 사용하여 자동 줄바꿈 및 중앙 정렬 */
+/* Flexbox 레이아웃 (자동 줄바꿈 + 중앙 정렬) */
 .polaroid-grid { 
     display: flex;
     flex-wrap: wrap;
-    justify-content: center; /* 가운데 정렬 (마지막 아이템 자동 센터링) */
+    justify-content: center;
     gap: 25px;
 }
 
@@ -78,20 +78,18 @@ body {
     box-shadow: var(--shadow-soft);
     cursor: pointer; transition: 0.3s;
     
-    /* PC 화면: 한 줄에 5개가 들어가도록 너비 계산 (간격 포함) */
+    /* PC: 한 줄에 5개 (간격 제외) */
     width: calc(20% - 25px); 
-    min-width: 160px; /* 너무 작아지지 않게 */
+    min-width: 160px;
     aspect-ratio: 1 / 1.3;
     
     display: flex; flex-direction: column; align-items: center;
     box-sizing: border-box;
-    
-    /* 약간씩 회전 효과는 JS에서 처리하지만 기본값 설정 */
     transform: rotate(0deg);
 }
 .member-polaroid:hover { transform: scale(1.05) rotate(0deg) !important; z-index: 10; box-shadow: var(--shadow-deep); }
 
-/* 프로필 사진 영역 */
+/* 프로필 사진 */
 .mem-img-box { 
     width: 100%; height: 80%; 
     background: #f0f0f0; 
@@ -101,26 +99,20 @@ body {
 .mem-img-box .material-icons-round { font-size: 3rem; color: #ccc; }
 .profile-img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
 
-/* 이름 텍스트 */
 .mem-name { 
     font-family: 'Nanum Pen Script', cursive; 
     font-size: 1.6rem; margin-top: 15px; 
     text-align: center; display: block; width: 100%;
 }
 
-/* [나의 롤링페이퍼 카드] 특별 스타일 */
-.my-card {
-    border: 2px dashed var(--primary); /* 점선 테두리로 강조 */
-    background: #fffcf0;
-}
+/* 나의 롤링페이퍼 카드 */
+.my-card { border: 2px dashed var(--primary); background: #fffcf0; }
 .my-card .mem-name { color: var(--primary); font-weight: bold; }
 .my-card .mem-img-box { background: rgba(255, 107, 0, 0.1); }
 .my-card .material-icons-round { color: var(--primary); }
 
-/* 기존 버튼 숨김 */
 .my-archive-btn { display: none; }
 
-/* 모바일 대응 (2줄로 변경) */
 @media (max-width: 768px) {
     .member-polaroid { width: calc(50% - 15px); }
 }
@@ -128,17 +120,13 @@ body {
 /* --- [4. 롤링페이퍼 (Desk Layout)] --- */
 #paper-page { background: url('assets/bg.jpg') no-repeat center center/cover; }
 
-/* 툴바 정렬 수정: Flexbox로 완벽한 중앙 정렬 */
 .toolbar {
     position: absolute; top: 0; left: 0; width: 100%; height: 60px;
     padding: 0 20px; box-sizing: border-box;
     display: flex; justify-content: space-between; align-items: center;
     z-index: 1000;
 }
-.title-box {
-    flex: 1; text-align: center; /* 가운데 영역 차지 */
-    display: flex; justify-content: center;
-}
+.title-box { flex: 1; text-align: center; display: flex; justify-content: center; }
 #target-name { 
     color: white; font-weight: bold; font-size: 1.1rem;
     background: rgba(0,0,0,0.6); padding: 8px 20px; border-radius: 30px;
@@ -150,32 +138,26 @@ body {
     display: flex; align-items: center; justify-content: center;
 }
 
-/* 데스크 래퍼: 화면 중앙에 책상 배치 */
 #desk-wrapper {
     width: 100%; height: 100%; 
     display: flex; align-items: center; justify-content: center;
-    overflow: hidden; padding-top: 50px; /* 툴바 공간 확보 */
+    overflow: hidden; padding-top: 50px;
     box-sizing: border-box;
 }
 
-/* 책상 표면: 비율 고정 (반응형의 핵심) */
 .desk-surface {
     position: relative;
     width: 100%; max-width: 600px; 
-    aspect-ratio: 1 / 1.4; /* 세로형 비율 (A4용지 비슷) */
-    /* background: rgba(255,0,0,0.1); 영역 확인용 */
+    aspect-ratio: 1 / 1.4;
 }
 
-/* --- 중앙 타이틀 (네온 제거) --- */
 .center-piece {
     position: absolute; top: 45%; left: 50%; 
     transform: translate(-50%, -50%);
-    width: 40%; z-index: 5;
-    pointer-events: none;
+    width: 40%; z-index: 5; pointer-events: none;
 }
 .title-img { width: 100%; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3)); }
 
-/* --- 슬롯 공통 --- */
 .slot {
     position: absolute; cursor: pointer;
     transition: all 0.3s ease;
@@ -189,7 +171,7 @@ body {
 }
 .slot.filled { background-color: white; border: none; }
 
-/* [A] 필름 스트립 (2개, 대각선 배치) */
+/* 필름 스트립 */
 .film-strip {
     position: absolute; background: #111; padding: 2% 0;
     box-shadow: var(--shadow-deep); z-index: 4;
@@ -197,47 +179,38 @@ body {
 }
 .strip-top-left { top: 5%; left: 5%; transform: rotate(-8deg); }
 .strip-bottom-right { bottom: 5%; right: 5%; transform: rotate(-5deg); }
-
 .film-row { display: flex; gap: 2%; padding: 0 3%; }
-.film-frame {
-    position: relative; flex: 1; aspect-ratio: 1/1; /* 정사각형 프레임 */
-    background: #222; border: 1px solid #444;
-}
+.film-frame { position: relative; flex: 1; aspect-ratio: 1/1; background: #222; border: 1px solid #444; }
 .film-frame.filled { background: #000; }
-
 .film-holes {
     height: 10px; width: 100%;
     background-image: radial-gradient(#fff 2px, transparent 3px);
     background-size: 15px 100%; opacity: 0.7;
 }
 
-/* [B] 폴라로이드 (4개, 남은 공간 배치) */
+/* 폴라로이드 배치 */
 .polaroid {
     width: 25%; aspect-ratio: 1 / 1.3;
     background: #fffcf4;
-    padding: 1.5% 1.5% 8% 1.5%; /* 하단 여백 비율로 */
+    padding: 1.5% 1.5% 8% 1.5%;
     box-sizing: border-box;
     box-shadow: var(--shadow-soft);
 }
 .p-tr { top: 8%; right: 5%; transform: rotate(8deg); z-index: 2; }
 .p-bl { bottom: 8%; left: 5%; transform: rotate(5deg); z-index: 3; }
-.p-mid-l { top: 40%; left: 3%; transform: rotate(-4deg); z-index: 2; } /* 중앙 왼쪽 */
-.p-mid-r { top: 55%; right: 2%; transform: rotate(3deg); z-index: 1; } /* 중앙 오른쪽 */
+.p-mid-l { top: 40%; left: 3%; transform: rotate(-4deg); z-index: 2; }
+.p-mid-r { top: 55%; right: 2%; transform: rotate(3deg); z-index: 1; }
 
-/* 텍스트/이미지 내부 처리 */
 .slot-img { width: 100%; height: 100%; object-fit: cover; }
 .slot-text { 
     position: absolute; width: 100%; text-align: center; pointer-events: none;
-    font-family: 'Nanum Pen Script', cursive; color: #333; 
-    font-size: 1.2rem;
+    font-family: 'Nanum Pen Script', cursive; color: #333; font-size: 1.2rem;
 }
 .polaroid .slot-text { bottom: 5%; left: 0; }
 .film-frame .slot-text { top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 0.9rem; }
 
-/* 장식 요소 */
 .deco-obj { position: absolute; pointer-events: none; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3)); }
 .camera { top: 12%; left: 55%; width: 20%; transform: rotate(15deg); z-index: 1; }
-
 .deco-text { 
     position: absolute; font-family: 'Nanum Brush Script', cursive; 
     color: rgba(255,255,255,0.9); font-size: 2rem; 
@@ -246,7 +219,7 @@ body {
 .text-bye { bottom: 25%; left: 20%; transform: rotate(-5deg); }
 .text-start { top: 25%; right: 10%; transform: rotate(5deg); }
 
-/* --- [모달창] --- */
+/* --- [5. 모달창 (작성/읽기) 수정] --- */
 .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
 .modal.open { display: flex; animation: zoomIn 0.3s; }
 @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -260,3 +233,55 @@ textarea { width: 100%; height: 100px; border: 1px solid #ddd; padding: 10px; bo
 .upload-btn { display: inline-block; padding: 8px 15px; background: #eee; border-radius: 20px; margin-top: 10px; cursor: pointer; }
 #img-preview-area img { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-top: 10px; }
 .submit-btn { background: var(--primary); color: white; border: none; padding: 10px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+
+/* --- [읽기 모달 디자인 수정] --- */
+.read-theme { 
+    max-width: 450px; /* 조금 더 넓게 */
+}
+.read-content-box { 
+    padding: 30px; /* 여백 넉넉하게 */
+    text-align: left;
+}
+#read-content { 
+    font-size: 1.1rem; 
+    line-height: 1.6; /* 줄 간격 넓게 */
+    color: #333; 
+    white-space: pre-wrap; /* 줄바꿈 유지 */
+    margin-bottom: 20px;
+    min-height: 50px;
+}
+#read-from { 
+    display: block; 
+    text-align: right; 
+    font-family: 'Nanum Pen Script', cursive; 
+    font-size: 1.6rem; 
+    color: var(--primary); 
+    margin-top: 20px;
+}
+#read-img-wrapper img {
+    width: 100%; 
+    display: block; 
+    border-bottom: 1px solid #eee; /* 이미지와 글 구분선 */
+}
+
+/* 닫기 버튼 (짜치지 않게 변경) */
+.close-read-btn {
+    display: block;
+    width: 80%;
+    margin: 0 auto 20px; /* 가운데 정렬 */
+    padding: 12px 0;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.close-read-btn:hover {
+    background: black;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}

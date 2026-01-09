@@ -11,7 +11,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// 11명 (나 포함) -> 내가 로그인하면 나머지 10명이 슬롯에 보임
+// 11명 멤버 리스트
 const USERS = [
     { name: "이호진", id: "202021019" }, { name: "정이룸", id: "202121255" },
     { name: "이윤서", id: "202220113" }, { name: "장유진", id: "202220301" },
@@ -47,40 +47,35 @@ function login() {
     }
 }
 
-// [기능 2] 대시보드 (친구들 10명 + 내 카드 정중앙)
+// [기능 2] 대시보드 (친구들 10명 + 내 카드)
 function initDashboard() {
     const list = document.getElementById('member-list');
     list.innerHTML = '';
 
-    // 1. 나를 제외한 친구들 (10명)
     const otherMembers = USERS.filter(user => user.id !== currentUser.id);
 
-    // 2. 친구들 카드 생성 (5명씩 2줄로 자연스럽게 배치됨)
+    // 친구들 카드 생성
     otherMembers.forEach(user => {
         const card = createCard(user, false);
         list.appendChild(card);
     });
 
-    // 3. 나의 롤링페이퍼 카드 생성 (맨 마지막 -> Flexbox 덕분에 자동으로 다음 줄 중앙에 위치)
-    const myUser = { name: "나의 롤링페이퍼", id: currentUser.id }; // 화면 표시용 가짜 객체
+    // 내 카드 생성
+    const myUser = { name: "나의 롤링페이퍼", id: currentUser.id };
     const myCard = createCard(myUser, true);
     list.appendChild(myCard);
 }
 
-// 카드 생성 헬퍼 함수 (사진 자동 로딩 포함)
+// 카드 생성 헬퍼
 function createCard(user, isMyCard) {
     const card = document.createElement('div');
     card.className = 'member-polaroid';
     if (isMyCard) card.classList.add('my-card');
     
-    // 약간의 랜덤 회전으로 자연스러움 연출 (-2도 ~ 2도)
     card.style.transform = `rotate(${Math.random() * 4 - 2}deg)`;
 
-    // 이미지 경로: assets/이름.jpg
-    // 이미지가 없으면 onerror 이벤트가 발생해서 자동으로 아이콘으로 바뀜
     const imgName = isMyCard ? currentUser.name : user.name;
     
-    // 내 카드일 때는 클릭 시 내꺼 열기, 남의 카드면 남의꺼 열기
     card.onclick = () => isMyCard ? openMyPaper() : openPaper(user);
 
     card.innerHTML = `
@@ -98,7 +93,7 @@ function createCard(user, isMyCard) {
 // [기능 3] 롤링페이퍼 열기
 function openPaper(target) {
     currentTarget = target;
-    document.getElementById('target-name').innerText = `${target.name}의 롤링페이퍼`;
+    document.getElementById('target-name').innerText = `${target.name}의 책상`;
     showPage('paper-page');
     loadMessages();
 }
@@ -115,7 +110,7 @@ function loadMessages() {
     .then(snap => {
         let index = 0;
         snap.forEach(doc => {
-            if (index > 9) return; // 10명 제한 (0~9)
+            if (index > 9) return;
             const data = doc.data();
             renderSlot(index, data);
             slotDataMap[index] = data;
@@ -143,16 +138,45 @@ function renderSlot(index, data) {
     }
 }
 
-// [기능 5] 슬롯 클릭
+// [기능 5] 슬롯 클릭 (권한 체크 강화)
 function handleSlotClick(index) {
-    if (slotDataMap[index]) {
-        openReadModal(slotDataMap[index]);
+    const message = slotDataMap[index];
+
+    // CASE 1: 이미 작성된 슬롯을 클릭했을 때 (읽기 권한 체크)
+    if (message) {
+        // 주인(Target)이거나 작성자(Me)인 경우만 열람 가능
+        // (기존 데이터 호환을 위해 id 체크와 이름 체크 병행)
+        const isOwner = currentUser.id === currentTarget.id;
+        const isAuthor = (message.fromId === currentUser.id) || (message.from === currentUser.name);
+
+        if (isOwner || isAuthor) {
+            openReadModal(message);
+        } else {
+            alert("작성자와 주인공만 확인할 수 있어요 🔒");
+        }
         return;
     }
+
+    // CASE 2: 빈 슬롯을 클릭했을 때 (쓰기 권한 체크)
+    
+    // 본인은 본인 페이지에 작성 불가
     if (currentUser.id === currentTarget.id) {
-        alert("친구들을 기다려보세요!");
+        alert("친구들의 메시지를 기다려보세요!");
         return;
     }
+
+    // [중요] 이미 이 사람에게 글을 썼는지 확인 (1인 1메시지 제한)
+    // 현재 로드된 메시지들 중 내가 쓴 게 있는지 검사
+    const alreadyWrote = Object.values(slotDataMap).some(msg => 
+        msg.fromId === currentUser.id || msg.from === currentUser.name
+    );
+
+    if (alreadyWrote) {
+        alert("이미 이 멤버에게 메시지를 남기셨습니다. (인당 하나~)");
+        return;
+    }
+
+    // 작성 가능
     selectedSlot = index;
     openWriteModal();
 }
@@ -165,7 +189,7 @@ function openWriteModal() {
     document.getElementById('img-preview-area').innerHTML = '';
 }
 
-// [기능 7] 이미지 압축 (무료 저장)
+// [기능 7] 이미지 압축
 function compressImage(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -204,8 +228,10 @@ async function submitMessage() {
             imageUrl = await compressImage(fileInput.files[0]);
         }
 
+        // DB 저장 (fromId 추가 저장)
         await db.collection('messages').add({
             from: currentUser.name,
+            fromId: currentUser.id, // ID를 같이 저장해야 정확한 구분이 가능
             to: currentTarget.id,
             content: content,
             imageUrl: imageUrl,
@@ -239,7 +265,9 @@ function openReadModal(data) {
     if(data.imageUrl) {
         const img = document.createElement('img');
         img.src = data.imageUrl;
+        // 스타일은 CSS에서 제어하지만 확실하게 인라인으로도 보장
         img.style.width = '100%';
+        img.style.display = 'block';
         img.style.borderRadius = '10px';
         imgWrapper.appendChild(img);
     }
