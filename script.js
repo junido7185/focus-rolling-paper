@@ -47,23 +47,52 @@ function login() {
     }
 }
 
-// [기능 2] 대시보드
+// [기능 2] 대시보드 (친구들 10명 + 내 카드 정중앙)
 function initDashboard() {
     const list = document.getElementById('member-list');
     list.innerHTML = '';
-    USERS.forEach(user => {
-        if (user.id === currentUser.id) return;
-        
-        const card = document.createElement('div');
-        card.className = 'member-polaroid';
-        card.style.setProperty('--r', `${Math.random() * 6 - 3}deg`);
-        card.innerHTML = `
-            <div class="mem-img-box"><span class="material-icons-round">face</span></div>
-            <span class="mem-name">${user.name}</span>
-        `;
-        card.onclick = () => openPaper(user);
+
+    // 1. 나를 제외한 친구들 (10명)
+    const otherMembers = USERS.filter(user => user.id !== currentUser.id);
+
+    // 2. 친구들 카드 생성 (5명씩 2줄로 자연스럽게 배치됨)
+    otherMembers.forEach(user => {
+        const card = createCard(user, false);
         list.appendChild(card);
     });
+
+    // 3. 나의 롤링페이퍼 카드 생성 (맨 마지막 -> Flexbox 덕분에 자동으로 다음 줄 중앙에 위치)
+    const myUser = { name: "나의 롤링페이퍼", id: currentUser.id }; // 화면 표시용 가짜 객체
+    const myCard = createCard(myUser, true);
+    list.appendChild(myCard);
+}
+
+// 카드 생성 헬퍼 함수 (사진 자동 로딩 포함)
+function createCard(user, isMyCard) {
+    const card = document.createElement('div');
+    card.className = 'member-polaroid';
+    if (isMyCard) card.classList.add('my-card');
+    
+    // 약간의 랜덤 회전으로 자연스러움 연출 (-2도 ~ 2도)
+    card.style.transform = `rotate(${Math.random() * 4 - 2}deg)`;
+
+    // 이미지 경로: assets/이름.jpg
+    // 이미지가 없으면 onerror 이벤트가 발생해서 자동으로 아이콘으로 바뀜
+    const imgName = isMyCard ? currentUser.name : user.name;
+    
+    // 내 카드일 때는 클릭 시 내꺼 열기, 남의 카드면 남의꺼 열기
+    card.onclick = () => isMyCard ? openMyPaper() : openPaper(user);
+
+    card.innerHTML = `
+        <div class="mem-img-box">
+            <img src="assets/${imgName}.jpg" 
+                 class="profile-img" 
+                 onerror="this.style.display='none'; this.parentNode.innerHTML='<span class=\'material-icons-round\'>face</span>'">
+        </div>
+        <span class="mem-name">${user.name}</span>
+    `;
+    
+    return card;
 }
 
 // [기능 3] 롤링페이퍼 열기
